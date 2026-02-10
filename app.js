@@ -352,9 +352,10 @@ function setLang(code) {
   }
 
   // Update language button label
-  const langLabels = { en: 'EN', ko: '한국어', ja: '日本語', 'zh-TW': '繁中' };
+  const langFlags = { en: 'us', ko: 'kr', ja: 'jp', 'zh-TW': 'tw' };
+  const langNames = { en: 'EN', ko: '한국어', ja: '日本語', 'zh-TW': '繁中' };
   const langBtn = $('langBtn');
-  if (langBtn) langBtn.textContent = langLabels[code] || code;
+  if (langBtn) langBtn.innerHTML = `<span class="fi fi-${langFlags[code]} fis"></span> ${langNames[code] || code}`;
 
   // Close dropdown
   const dd = $('langDropdown');

@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>STO Protocol</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⬡</text></svg>">
+    <link rel="icon" href="images/logo.jpg" type="image/jpeg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@7.3.2/css/flag-icons.min.css">
 </head>
 <body>
 
@@ -16,17 +17,17 @@
 <nav class="navbar">
     <div class="nav-inner">
         <a href="#" class="brand">
-            <div class="brand-icon">S</div>
+            <img class="brand-icon" src="images/logo.jpg" alt="STO">
             <span class="brand-name">STO Protocol</span>
         </a>
         <div class="nav-actions">
             <div class="lang-switcher">
-                <button class="lang-btn" id="langBtn" onclick="toggleLangDropdown(event)">EN</button>
+                <button class="lang-btn" id="langBtn" onclick="toggleLangDropdown(event)"><span class="fi fi-us fis"></span> EN</button>
                 <div class="lang-dropdown" id="langDropdown">
-                    <button class="lang-opt" onclick="setLang('en')">EN</button>
-                    <button class="lang-opt" onclick="setLang('ko')">한국어</button>
-                    <button class="lang-opt" onclick="setLang('ja')">日本語</button>
-                    <button class="lang-opt" onclick="setLang('zh-TW')">繁體中文</button>
+                    <button class="lang-opt" onclick="setLang('en')"><span class="fi fi-us fis"></span> EN</button>
+                    <button class="lang-opt" onclick="setLang('ko')"><span class="fi fi-kr fis"></span> 한국어</button>
+                    <button class="lang-opt" onclick="setLang('ja')"><span class="fi fi-jp fis"></span> 日本語</button>
+                    <button class="lang-opt" onclick="setLang('zh-TW')"><span class="fi fi-tw fis"></span> 繁體中文</button>
                 </div>
             </div>
             <button class="wallet-btn" id="walletBtn" onclick="handleWalletClick()" data-i18n="connectWallet">
