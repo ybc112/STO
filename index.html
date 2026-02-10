@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STO Protocol</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⬡</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ========== Navbar ========== -->
+<nav class="navbar">
+    <div class="nav-inner">
+        <a href="#" class="brand">
+            <div class="brand-icon">S</div>
+            <span class="brand-name">STO Protocol</span>
+        </a>
+        <div class="nav-actions">
+            <div class="lang-switcher">
+                <button class="lang-btn" id="langBtn" onclick="toggleLangDropdown(event)">EN</button>
+                <div class="lang-dropdown" id="langDropdown">
+                    <button class="lang-opt" onclick="setLang('en')">EN</button>
+                    <button class="lang-opt" onclick="setLang('ko')">한국어</button>
+                    <button class="lang-opt" onclick="setLang('ja')">日本語</button>
+                    <button class="lang-opt" onclick="setLang('zh-TW')">繁體中文</button>
+                </div>
+            </div>
+            <button class="wallet-btn" id="walletBtn" onclick="handleWalletClick()" data-i18n="connectWallet">
+                Connect Wallet
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- ========== Page ========== -->
+<div class="page">
+
+    <!-- Hero -->
+    <section class="hero">
+        <h1 data-i18n="heroTitle">Referral Management</h1>
+        <p data-i18n="heroSubtitle">View your referral network, bind a referrer, query any address</p>
+    </section>
+
+    <!-- Tabs -->
+    <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="my" role="tab" onclick="switchTab('my')" data-i18n="tabMy">My Referrals</button>
+        <button class="tab" data-tab="bind" role="tab" onclick="switchTab('bind')" data-i18n="tabBind">Bind Referral</button>
+        <button class="tab" data-tab="search" role="tab" onclick="switchTab('search')" data-i18n="tabSearch">Search Address</button>
+        <div class="tab-indicator" id="tabIndicator"></div>
+    </div>
+
+    <!-- ===== Tab 1: My Referrals ===== -->
+    <div class="panel active" id="panel-my">
+
+        <!-- No wallet connected -->
+        <div class="card card-empty" id="noWallet">
+            <div class="empty-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="6" width="20" height="14" rx="3"/><path d="M22 10H18a2 2 0 000 4h4"/><circle cx="18" cy="12" r="0.5" fill="currentColor"/><path d="M6 6V5a3 3 0 013-3h6"/></svg>
+            </div>
+            <h3 data-i18n="pleaseConnect">Please Connect Wallet</h3>
+            <p data-i18n="connectToView">Connect your wallet to view referral relationships</p>
+            <button class="btn btn-primary" onclick="handleWalletClick()" data-i18n="connectWallet">Connect Wallet</button>
+        </div>
+
+        <!-- Connected - data panels -->
+        <div id="myData" style="display:none">
+            <!-- Stats row -->
+            <div class="row-2">
+                <div class="card card-stat">
+                    <span class="stat-label" data-i18n="bindStatus">Bind Status</span>
+                    <span class="stat-val" id="sBindStatus">—</span>
+                </div>
+                <div class="card card-stat">
+                    <span class="stat-label" data-i18n="directCount">Direct Referrals</span>
+                    <span class="stat-val" id="sDirectCount">—</span>
+                </div>
+            </div>
+
+            <!-- Referrer card -->
+            <div class="card" id="referrerBox" style="display:none">
+                <div class="card-head">
+                    <span class="dot dot-green"></span>
+                    <span data-i18n="myReferrer">My Referrer</span>
+                </div>
+                <div class="addr-row">
+                    <code id="myReferrer">—</code>
+                    <button class="icon-btn" onclick="copy('myReferrer')" data-i18n-title="copyTooltip" title="Copy">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pending invite -->
+            <div class="card card-warn" id="pendingBox" style="display:none">
+                <div class="card-head">
+                    <span class="dot dot-yellow"></span>
+                    <span data-i18n="receivedInvite">Received Referral Invite</span>
+                </div>
+                <p class="hint" data-i18n="pendingHint">The following address sent you a referral invite. Confirm to complete binding:</p>
+                <div class="addr-row">
+                    <code id="pendingAddr">—</code>
+                    <button class="icon-btn" onclick="copy('pendingAddr')" data-i18n-title="copyTooltip" title="Copy">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                    </button>
+                </div>
+                <button class="btn btn-primary btn-block" id="confirmBindBtn" onclick="confirmBind()" data-i18n="confirmBindBtn">Confirm Bind (Send 0.01 STO)</button>
+            </div>
+
+            <!-- Direct referral list -->
+            <div class="card" id="directBox" style="display:none">
+                <div class="card-head">
+                    <span class="dot dot-blue"></span>
+                    <span data-i18n="directList">Direct Referral List</span>
+                    <span class="badge" id="directBadge">0</span>
+                </div>
+                <div id="directList" class="list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Tab 2: Bind Referral ===== -->
+    <div class="panel" id="panel-bind">
+        <div class="card">
+            <h2 class="card-title" data-i18n="bindTitle">Bind Referral Relationship</h2>
+            <p class="card-desc" data-i18n="bindDesc">STO uses a two-way confirmation mechanism to establish referral relationships</p>
+
+            <!-- Flow steps -->
+            <div class="flow">
+                <div class="flow-step">
+                    <div class="flow-num">1</div>
+                    <div>
+                        <strong data-i18n="step1Title">Referrer sends invite</strong>
+                        <span data-i18n="step1Desc">A bound user sends 0.01 STO to the new user</span>
+                    </div>
+                </div>
+                <div class="flow-line"></div>
+                <div class="flow-step">
+                    <div class="flow-num">2</div>
+                    <div>
+                        <strong data-i18n="step2Title">New user confirms binding</strong>
+                        <span data-i18n="step2Desc">New user sends 0.01 STO back to the referrer to complete binding</span>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="sep">
+
+            <label class="label" data-i18n="targetAddrLabel">Target Wallet Address</label>
+            <input class="input" id="bindInput" type="text" data-i18n-placeholder="inputPlaceholder" placeholder="0x..." spellcheck="false" autocomplete="off">
+
+            <div class="btn-group">
+                <button class="btn btn-primary btn-block" id="inviteBtn" onclick="sendInvite()" disabled data-i18n="inviteBtn">
+                    Send Invite (Send 0.01 STO)
+                </button>
+                <button class="btn btn-outline btn-block" id="confirmBtn2" onclick="confirmBindFromInput()" disabled data-i18n="confirmBtn2">
+                    Confirm Bind (Send back 0.01 STO)
+                </button>
+            </div>
+
+            <div class="msg msg-ok" id="bindOk"></div>
+            <div class="msg msg-err" id="bindErr"></div>
+        </div>
+    </div>
+
+    <!-- ===== Tab 3: Search Address ===== -->
+    <div class="panel" id="panel-search">
+        <div class="card">
+            <h2 class="card-title" data-i18n="searchTitle">Search Referral Relationship</h2>
+            <p class="card-desc" data-i18n="searchDesc">Enter any address to view its referral information</p>
+
+            <div class="search-row">
+                <input class="input" id="searchInput" type="text" data-i18n-placeholder="searchPlaceholder" placeholder="Enter wallet address 0x..." spellcheck="false" autocomplete="off">
+                <button class="btn btn-primary btn-icon" id="searchBtn" onclick="searchAddress()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+                </button>
+            </div>
+
+            <!-- Search result -->
+            <div id="searchResult" style="display:none">
+                <div class="result-addr" id="srAddr"></div>
+
+                <div class="row-2">
+                    <div class="mini-stat">
+                        <span class="mini-label" data-i18n="searchBindStatus">Bind Status</span>
+                        <span class="mini-val" id="srStatus">—</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="mini-label" data-i18n="searchDirectCount">Direct Referrals</span>
+                        <span class="mini-val" id="srDirect">—</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="mini-label" data-i18n="searchReferrer">Referrer</span>
+                        <span class="mini-val mono" id="srReferrer">—</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="mini-label" data-i18n="searchPending">Pending Invite</span>
+                        <span class="mini-val mono" id="srPending">—</span>
+                    </div>
+                </div>
+
+                <!-- Referral chain -->
+                <div id="chainBox" style="display:none">
+                    <div class="card-head" style="margin-top:16px">
+                        <span class="dot dot-purple"></span>
+                        <span data-i18n="referralChain">Referral Chain (Upline)</span>
+                    </div>
+                    <div id="chainList" class="chain"></div>
+                </div>
+            </div>
+
+            <div class="msg msg-err" id="searchErr"></div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ========== Footer ========== -->
+<footer class="footer">
+    <span>BSC Network</span>
+    <span class="sep-dot"></span>
+    <a href="https://bscscan.com/address/0x6D857C2A06e1c91D4C025221b8c05FAEFc0d4E17" target="_blank" rel="noopener" data-i18n="viewContract">View Contract</a>
+    <span class="sep-dot"></span>
+    <span>STO Protocol &copy; 2026</span>
+</footer>
+
+<!-- ========== Wallet Modal ========== -->
+<div class="overlay" id="walletOverlay" onclick="closeModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-head">
+            <h3 data-i18n="walletModalTitle">Connect Wallet</h3>
+            <button class="icon-btn" onclick="closeModal()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <button class="wallet-opt" onclick="connectWallet()">
+            <div class="wallet-opt-icon" style="background:rgba(226,118,27,.12)">🦊</div>
+            <div><strong>MetaMask</strong><span data-i18n="metamaskDesc">Browser extension wallet</span></div>
+        </button>
+        <button class="wallet-opt" onclick="connectWallet()">
+            <div class="wallet-opt-icon" style="background:rgba(51,117,187,.12)">🛡️</div>
+            <div><strong>TokenPocket / Trust Wallet</strong><span data-i18n="tpTrustDesc">Mobile wallet</span></div>
+        </button>
+    </div>
+</div>
+
+<!-- ========== Toast ========== -->
+<div class="toast-box" id="toastBox"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
